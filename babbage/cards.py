@@ -58,7 +58,6 @@ class TileCard(Card):
         if self.entity:
             state = hass.states.get(self.entity)
             if state:
-                print(state["attributes"])
                 return state["attributes"]
         return self.value
 
