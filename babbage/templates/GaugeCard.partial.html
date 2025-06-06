@@ -1,0 +1,19 @@
+<div id="gauge-{{ card.id }}" class=""></div>
+<script type="text/javascript">
+  var value = {{ card.state(hass) }};
+  createGauge(value, "gauge-{{ card.id }}", {
+    title: {{ card.name | tojson }},
+    height: "50%",
+    labels: {
+      distance: 15,
+    },
+    series: {
+      fontSize: "2em",
+      fontWeight: "550",
+    },
+    yAxis: {
+      min: {{ card.min }},
+      max: {{ card.max }},
+    },
+  });
+</script>

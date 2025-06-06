@@ -1,0 +1,18 @@
+[project]
+name = "babbage"
+version = "0.1.0"
+description = "A TRMNL server for Home Assistant"
+authors = [{ name = "Simon Cozens", email = "simon@simon-cozens.org" }]
+license = { text = "MIT" }
+readme = "README.md"
+dependencies = [
+    "Pillow >= 9.0.0",
+    "aiohttp >= 3.8.0",
+    "jinja2",
+    "pyyaml",
+    "requests",
+    "websockets >= 10.0.0",
+]
+
+[project.scripts]
+babbage = "babbage.__main__:main"

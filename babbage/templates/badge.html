@@ -1,0 +1,19 @@
+<div class="item bg--gray-5" style="border-radius: 10px; padding: 5px">
+  {% if badge.show_entity_picture %}
+  <img
+    class="image"
+    style="border-radius: 50%; width: 32px; height: 32px"
+    src="{{ badge.entity_picture(hass) }}"
+    alt="{{ badge.friendly_name(hass) }}"
+  />
+  {% endif %} {% set state = badge.state(hass)%}
+  <div class="content">
+    {% if badge.show_name %}
+    <span class="title title--small text-stroke text-stroke--small"
+      >{{ badge.friendly_name(hass) }}</span
+    >
+    {% endif %} {% if badge.show_state %}
+    <span class="description text-stroke">{{ state.state }}</span>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<div class="">
+  {% if section.type == "grid" %} {% for card in section.cards %} {{
+  card.render(hass) }} {% endfor %} {% else %}
+  <h2>Unknown section type {{ section.type }}</h2>
+  {% endif %}
+</div>

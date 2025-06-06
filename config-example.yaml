@@ -1,0 +1,4 @@
+ha_url: homeassistant.local:8123
+access_token: bcdefg
+dashboard_name: dashboard-trmnl
+refresh_rate: 500
