@@ -1,3 +1,4 @@
+import json
 import sys
 from jinja2 import pass_environment
 import markupsafe
@@ -33,6 +34,33 @@ class GaugeCard(Card):
         self.name = kwargs.pop("name", None)
         self.needle = kwargs.pop("needle", False)
         self.kwargs = kwargs
+
+    def state(self, hass):
+        if self.entity:
+            state = hass.states.get(self.entity)
+            if state:
+                return state["state"]
+        return self.value
+
+
+class TileCard(Card):
+    def __init__(self, **kwargs):
+        self.type = kwargs.pop("type", "tile")
+        self.entity = kwargs.pop("entity", None)
+        self.icon = kwargs.pop("icon", "mdi:tile")
+        self.name = kwargs.pop("name", None)
+        self.value = kwargs.pop("value", None)
+        self.unit = kwargs.pop("unit", "")
+
+        self.kwargs = kwargs
+
+    def attributes(self, hass):
+        if self.entity:
+            state = hass.states.get(self.entity)
+            if state:
+                print(state["attributes"])
+                return state["attributes"]
+        return self.value
 
     def state(self, hass):
         if self.entity:

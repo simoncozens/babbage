@@ -1,0 +1,12 @@
+<div class="item">
+    <div class="meta">
+        <span class="iconify" data-icon="{{card.icon | replace(" :", "-" ) }}"></span>
+    </div>
+    {% set state = card.state(hass)%}
+    <div class="content">
+        <span class="title title--small" data-pixel-perfect="true">{{ card.name }}</span>
+        <span class="description" data-pixel-perfect="true">
+            <span class="value">{{ state }} {{card.attributes(hass).unit_of_measurement}}</span>
+        </span>
+    </div>
+</div>
