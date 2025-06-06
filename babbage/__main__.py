@@ -28,6 +28,9 @@ def main(args=None):
     assert "access_token" in config, "Configuration must contain 'access_token'"
     assert "dashboard_name" in config, "Configuration must contain 'dashboard_name'"
 
+    host = args.host or config.get("host") or "0.0.0.0"
+    httpPort = args.port or config.get("port") or 2300
+
     if args.dev is not None:
         from babbage.hass import HassDashboard
 
@@ -37,13 +40,15 @@ def main(args=None):
             url_path=config["dashboard_name"],
         )
         asyncio.run(dashboard.fetch())
-        open("dashboard.html", "w").write(dashboard.render(args.dev))
+        open("dashboard.html", "w").write(
+            dashboard.render(args.dev, host=f"http://{host}:{httpPort}")
+        )
         return
 
     server = Server(
         config,
-        host=args.host or config.get("host") or "0.0.0.0",
-        httpPort=args.port or config.get("port") or 2300,
+        host=host,
+        httpPort=httpPort,
         debug=args.debug,
     )
     server.run()

@@ -69,14 +69,14 @@ class HassDashboard:
             message = json.loads(await websocket.recv())
             self.states = {x["entity_id"]: x for x in message["result"]}
 
-    def render(self, view_index: int = 0):
+    def render(self, view_index: int = 0, **kwargs):
         env = Environment(
             loader=PackageLoader("babbage", "templates"),
             autoescape=select_autoescape(["html", "xml"]),
         )
         template = env.get_template("dashboard.html")
         view = self.views[view_index]
-        return template.render(view=view, hass=self)
+        return template.render(view=view, hass=self, **kwargs)
 
     def get_rest(self, url_path, content_type="application/json"):
         headers = {
