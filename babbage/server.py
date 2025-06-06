@@ -47,9 +47,19 @@ class Server:
 
     async def logHandler(self, request: web.Request) -> web.Response:
         kwargs = await request.json()
-        logging.info(f"Logs {request.remote}: {kwargs}")
-        logging.info(f"Headers: {request.headers}")
+        logs = kwargs.get("log", {}).get("logs_array", [])
+
         # Post this back to HASS
+        entity = "sensor.trmnl_" + request.headers["ID"].replace(":", "_").lower()
+        for log in logs:
+            self.hass.post_rest(
+                "/api/states/" + entity,
+                {
+                    "state": log["log_message"],
+                    "attributes": log.get("device_status_stamp", {}),
+                },
+            )
+
         return web.Response(status=204)
 
     async def setupHandler(self, request: web.Request) -> web.Response:

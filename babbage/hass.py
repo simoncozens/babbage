@@ -81,10 +81,22 @@ class HassDashboard:
     def get_rest(self, url_path, content_type="application/json"):
         headers = {
             "Authorization": "Bearer " + self.access_token,
-            "content-type": content_type,
+            "Content-type": content_type,
         }
         response = requests.get(f"http://{self.ha_url}{url_path}", headers=headers)
         response.raise_for_status()
         if content_type == "application/json":
             return response.json()
         return response.content
+
+    def post_rest(self, url_path, data, content_type="application/json"):
+        headers = {
+            "Authorization": "Bearer " + self.access_token,
+            "Content-type": content_type,
+        }
+        response = requests.post(
+            f"http://{self.ha_url}{url_path}", json=data, headers=headers
+        )
+        response.raise_for_status()
+        if content_type == "application/json":
+            return response.json()
