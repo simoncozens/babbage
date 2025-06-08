@@ -28,13 +28,17 @@
       {% for hour in card.forecast[0:5] %}
 
       <div class="text--center">
-        <div class="label">{{hour.datetime | format_date("%H:%M") }}</div>
+        <div class="label" data-pixel-perfect="true">
+          {{hour.datetime | format_date("%H:%M") }}
+        </div>
         <div
           class="iconify w--16 h--16 m--6"
           data-icon="{{ card.weather_icon(hour.condition) }}"
         ></div>
         <div>
-          <span class="value value--small">{{ hour.temperature }}°</span>
+          <span class="value value--small" data-pixel-perfect="true"
+            >{{ hour.temperature }}°</span
+          >
         </div>
       </div>
       {% endfor %}
