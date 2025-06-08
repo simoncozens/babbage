@@ -30,7 +30,7 @@ class Server:
             config["dashboard_name"],
             debug=debug,
         )
-        self.last_screen = {}
+        self.current_screen = {}
 
     @property
     def refresh_rate(self) -> int:
@@ -86,7 +86,16 @@ class Server:
 
     async def displayHandler(self, request: web.Request) -> web.Response:
         await self.hass.fetch()
-        html = self.hass.render(DASHBOARD_INDEX, host=request.host)
+        device = request.headers.get("ID", "unknown_device")
+        if device not in self.current_screen:
+            self.current_screen[device] = 0
+        html = self.hass.render(self.current_screen[device], host=request.host)
+        logger.info(
+            f"Rendering dashboard for {device} at index {self.current_screen[device]}"
+        )
+        self.current_screen[device] = (1 + self.current_screen[device]) % len(
+            self.hass.views
+        )
         if self.debug:
             open("debug.html", "w").write(html)
         img = render_html(html)
