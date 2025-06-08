@@ -1,5 +1,8 @@
+import datetime
 import json
 from dataclasses import dataclass
+import pprint
+import re
 from typing import List
 
 import requests
@@ -7,20 +10,22 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from websockets.asyncio.client import connect
 
 from babbage.badge import Badge
-from babbage.cards import Card, make_card
+from babbage.cards import Card
+import babbage.cards as cards
 
 
 @dataclass
 class Section:
     type: str
     cards: List[Card]
+    _hass: "HassDashboard"
 
     def __post_init__(self):
-        self.cards = [make_card(**card) for card in self.cards]
+        self.cards = [self._hass.make_card(**card) for card in self.cards]
 
 
 @dataclass
-class View:
+class SectionsView:
     title: str
     icon: str
     theme: str
@@ -29,23 +34,59 @@ class View:
     badges: List[Badge]
     max_columns: int
     cards: List[Card]
+    _hass: "HassDashboard"
 
     def __post_init__(self):
-        self.sections = [Section(**section) for section in self.sections]
-        self.badges = [Badge(**badge) for badge in self.badges]
-        self.cards = [make_card(**card) for card in self.cards]
+        self.sections = [
+            Section(_hass=self._hass, **section) for section in self.sections
+        ]
+        self.badges = [Badge(_hass=self._hass, **badge) for badge in self.badges]
+        self.cards = [self._hass.make_card(**card) for card in self.cards]
+
+
+@dataclass
+class PanelView:
+    type: str
+    cards: List[Card]
+    icon: str
+    _hass: "HassDashboard"
+    path: str = ""
+
+    def __post_init__(self):
+        self.cards = [self._hass.make_card(**card) for card in self.cards]
 
 
 class HassDashboard:
-    def __init__(self, ha_url: str, access_token: str, url_path: str):
+    def __init__(
+        self, ha_url: str, access_token: str, url_path: str, debug: bool = False
+    ):
         self.ha_url = ha_url
         self.access_token = access_token
         self.url_path = url_path
+        self.debug = debug
         self.views = []
         self.states = []
 
     def _convert_views(self, views):
-        return [View(**view) for view in views]
+        view_objs = []
+        for view in views:
+            if view["type"] == "panel":
+                view_objs.append(PanelView(_hass=self, **view))
+            elif view["type"] == "sections":
+                view_objs.append(SectionsView(_hass=self, **view))
+            else:
+                raise ValueError(f"Unknown view type: {view['type']}")
+        return view_objs
+
+    def make_card(self, **kwargs):
+        type = kwargs.pop("type", "unknown")
+        clsname = re.sub(r"\W+", "", type.title()) + "Card"
+        if hasattr(cards, clsname):
+            card = getattr(cards, clsname)(**kwargs)
+        else:
+            card = cards.UnknownCard(type=type, **kwargs)
+        card._hass = self
+        return card
 
     async def fetch(self):
         async with connect(
@@ -74,9 +115,14 @@ class HassDashboard:
             loader=PackageLoader("babbage", "templates"),
             autoescape=select_autoescape(["html", "xml"]),
         )
+        env.filters["format_date"] = (
+            lambda x, fmt="%Y-%m-%d %H:%M:%S": datetime.datetime.fromisoformat(
+                x
+            ).strftime(fmt)
+        )
         template = env.get_template("dashboard.html")
         view = self.views[view_index]
-        return template.render(view=view, hass=self, **kwargs)
+        return template.render(view=view, hass=self, debug=self.debug, **kwargs)
 
     def get_rest(self, url_path, content_type="application/json"):
         headers = {

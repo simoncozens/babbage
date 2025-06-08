@@ -1,0 +1,44 @@
+<div class="mashup mashup--2Tx1B">
+  {% if card.show_current %}
+  <div class="view view--quadrant">
+    <div class="layout layout--col">
+      <div
+        class="iconify w--32 h--32"
+        data-icon="{{ card.weather_icon() }}"
+      ></div>
+      <div class="label">
+        <span class="title">{{ card.weather_name }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="view view--quadrant">
+    <div class="layout layout--col">
+      <div>
+        <span class="value">{{ card.attributes.temperature }}</span>
+        <sup>{{ card.attributes.temperature_unit }}</sup>
+      </div>
+      <div>{{ card.forecast_high }}° / {{ card.forecast_low }}°</div>
+    </div>
+  </div>
+  {% endif %}
+  <!-- -->
+  {% if card.show_forecast %}
+  <div class="view view--half_horizontal">
+    <div class="layout layout--row layout--stretch">
+      {% for hour in card.forecast[0:5] %}
+
+      <div class="text--center">
+        <div class="label">{{hour.datetime | format_date("%H:%M") }}</div>
+        <div
+          class="iconify w--16 h--16 m--6"
+          data-icon="{{ card.weather_icon(hour.condition) }}"
+        ></div>
+        <div>
+          <span class="value value--small">{{ hour.temperature }}°</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>

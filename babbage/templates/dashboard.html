@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+
     <link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css" />
     <script src="https://usetrmnl.com/js/latest/plugins.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -10,32 +12,25 @@
     <script>
       {% include "dashboard.js" %}
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;350;375;400;450;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
   </head>
   <body class="environment trmnl">
     <div class="screen" id="screen">
       <div class="view view--full">
-        <div class="layout layout--col">
-          {% if view.badges %}
-          <div class="columns" id="badges">
-              {% for badge in view.badges %}
-              <div class="column">
-                  {% include "badge.html" %}
-              </div>
-              {% endfor %}
-          </div>
-          {% endif %}
-    
-          <div class="stretch-y">
-            <div class="columns">
-              {% for section in view.sections %}
-              <div class="column">
-                {% include "section.html" %}
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-      </div> 
-      {% include "titlebar.html" %}
+        {% if view.type == "sections" %} {% include "SectionsView.html" %} {%
+        else %} {% include "PanelView.html" %} {% endif %} {% include
+        "titlebar.html" %}
+      </div>
     </div>
   </body>
 </html>

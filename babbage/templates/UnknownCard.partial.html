@@ -2,5 +2,9 @@
   <div class="">
     <h2>Unknown Card</h2>
     <p>This card type {{ card.type }} is not recognized.</p>
+    {% if debug %}
+    <p>Debug information:</p>
+    <pre>{{ card.kwargs | tojson(indent=2) }}</pre>
+    {% endif %}
   </div>
 </div>

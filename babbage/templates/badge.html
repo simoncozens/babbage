@@ -3,17 +3,17 @@
   <img
     class="image"
     style="border-radius: 50%; width: 32px; height: 32px"
-    src="{{ badge.entity_picture(hass) }}"
-    alt="{{ badge.friendly_name(hass) }}"
+    src="{{ badge.entity_picture }}"
+    alt="{{ badge.friendly_name }}"
   />
-  {% endif %} {% set state = badge.state(hass)%}
+  {% endif %}
   <div class="content">
     {% if badge.show_name %}
     <span class="title title--small text-stroke text-stroke--small"
-      >{{ badge.friendly_name(hass) }}</span
+      >{{ badge.friendly_name }}</span
     >
     {% endif %} {% if badge.show_state %}
-    <span class="description text-stroke">{{ state.state }}</span>
+    <span class="description text-stroke">{{ badge.state }}</span>
     {% endif %}
   </div>
 </div>

@@ -38,6 +38,7 @@ def main(args=None):
             ha_url=config["ha_url"],
             access_token=config["access_token"],
             url_path=config["dashboard_name"],
+            debug=True,
         )
         asyncio.run(dashboard.fetch())
         open("dashboard.html", "w").write(

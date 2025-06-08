@@ -1,6 +1,6 @@
 <div id="gauge-{{ card.id }}" class=""></div>
 <script type="text/javascript">
-  var value = {{ card.state(hass) }};
+  var value = {{ card.state }};
   createGauge(value, "gauge-{{ card.id }}", {
     title: {{ card.name | tojson }},
     height: "50%",

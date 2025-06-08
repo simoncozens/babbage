@@ -25,8 +25,12 @@ class Server:
         self.httpPort = httpPort
         self.debug = debug
         self.hass = HassDashboard(
-            config["ha_url"], config["access_token"], config["dashboard_name"]
+            config["ha_url"],
+            config["access_token"],
+            config["dashboard_name"],
+            debug=debug,
         )
+        self.last_screen = {}
 
     @property
     def refresh_rate(self) -> int:
