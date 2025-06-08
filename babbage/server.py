@@ -93,13 +93,15 @@ class Server:
         logger.info(
             f"Rendering dashboard for {device} at index {self.current_screen[device]}"
         )
-        self.current_screen[device] = (1 + self.current_screen[device]) % len(
-            self.hass.views
-        )
         if self.debug:
             open("debug.html", "w").write(html)
         img = render_html(html)
-        out_filename = f"{self.config['dashboard_name']}-{DASHBOARD_INDEX}.png"
+        out_filename = (
+            f"{self.config['dashboard_name']}-{self.current_screen[device]}.png"
+        )
+        self.current_screen[device] = (1 + self.current_screen[device]) % len(
+            self.hass.views
+        )
         if request.rel_url.query.get("base_64") or request.headers.get("BASE64"):
             logger.info("Returning image as base64")
             with io.BytesIO() as output:
