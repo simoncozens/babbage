@@ -56,11 +56,24 @@ class Server:
         # Post this back to HASS
         entity = "sensor.trmnl_" + request.headers["ID"].replace(":", "_").lower()
         for log in logs:
+            # Do battery level separately
+            attributes = log.get("device_status_stamp", {})
+            battery = attributes.pop("battery_voltage")
             self.hass.post_rest(
                 "/api/states/" + entity,
+                {"state": log["log_message"], "attributes": attributes},
+            )
+            self.hass.post_rest(
+                "/api/states/" + entity + "_battery_voltage",
                 {
-                    "state": log["log_message"],
-                    "attributes": log.get("device_status_stamp", {}),
+                    "state": float(battery),
+                    "attributes": {
+                        "unit_of_measurement": "V",
+                        "icon": "mdi:battery",
+                        "unique_id": entity + "_battery_voltage",
+                        "device_class": "voltage",
+                        "name": "TRMNL Battery Voltage",
+                    },
                 },
             )
 
