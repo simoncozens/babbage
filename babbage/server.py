@@ -13,8 +13,6 @@ from babbage.render import render_html
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-DASHBOARD_INDEX = 0  # This will rotate, one day.
-
 
 class Server:
     def __init__(
