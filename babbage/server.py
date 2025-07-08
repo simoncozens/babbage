@@ -9,6 +9,7 @@ from aiohttp import web
 
 from babbage.hass import HassDashboard
 from babbage.render import render_html
+from babbage.utils import state_of_charge
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -62,14 +63,14 @@ class Server:
                 {"state": log["log_message"], "attributes": attributes},
             )
             self.hass.post_rest(
-                "/api/states/" + entity + "_battery_voltage",
+                "/api/states/" + entity + "_battery",
                 {
-                    "state": float(battery),
+                    "state": state_of_charge(battery),
                     "attributes": {
-                        "unit_of_measurement": "V",
+                        "unit_of_measurement": "%",
                         "icon": "mdi:battery",
                         "unique_id": entity + "_battery_voltage",
-                        "device_class": "voltage",
+                        "device_class": "battery",
                         "name": "TRMNL Battery Voltage",
                     },
                 },
