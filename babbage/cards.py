@@ -41,6 +41,16 @@ class UnknownCard(Card):
         self.kwargs = kwargs
 
 
+class HeadingCard(Card):
+    def __init__(self, **kwargs):
+        print("HeadingCard init with kwargs:")
+        print(kwargs)
+        self.type = kwargs.pop("type", "header")
+        self.heading = kwargs.pop("heading", None)
+
+        self.kwargs = kwargs
+
+
 class GaugeCard(Card):
     def __init__(self, **kwargs):
         self.type = kwargs.pop("type", "gauge")

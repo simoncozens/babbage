@@ -1,9 +1,12 @@
+from dataclasses import field
+from typing import Optional
 import datetime
 import json
 from dataclasses import dataclass
 import pprint
 import re
 from typing import List
+import logging
 
 import requests
 from jinja2 import Environment, PackageLoader, select_autoescape
@@ -28,13 +31,14 @@ class Section:
 class SectionsView:
     title: str
     icon: str
-    theme: str
     type: str
     sections: List[Section]
-    badges: List[Badge]
     max_columns: int
     cards: List[Card]
     _hass: "HassDashboard"
+    badges: List[Badge] = field(default_factory=list)
+    path: Optional[str] = None
+    theme: Optional[str] = None
 
     def __post_init__(self):
         self.sections = [
@@ -76,6 +80,9 @@ class HassDashboard:
                 view_objs.append(SectionsView(_hass=self, **view))
             else:
                 raise ValueError(f"Unknown view type: {view['type']}")
+        if self.debug:
+            print("Views:")
+            pprint.pprint(view_objs)
         return view_objs
 
     def make_card(self, **kwargs):
@@ -84,6 +91,7 @@ class HassDashboard:
         if hasattr(cards, clsname):
             card = getattr(cards, clsname)(**kwargs)
         else:
+            logging.info(f"Unknown card type: {type}, using UnknownCard")
             card = cards.UnknownCard(type=type, **kwargs)
         card._hass = self
         return card
